@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Accounting Report{% endblock %}
+
+{% block content %}
+
+<head>
+    <title>Upload Files</title>
+</head>
+<body>
+    <h3>Upload SAD Detail and Budget To Generate Report</h3><br>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit">Generate Report</button>
+    </form>
+</body>
+
+{% endblock %}

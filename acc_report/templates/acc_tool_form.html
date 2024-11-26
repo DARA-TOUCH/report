@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Accounting Tool{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+<h2>Upload File to Generate Accounting Report</h2>
+
+<form id="file-upload-form">
+    <label for="sad_file">SAD File:</label>
+    <input type="file" name="sad_file" id="sad_file"><br><br>
+
+    <label for="budget_file">Budget File:</label>
+    <input type="file" name="budget_file" id="budget_file">
+
+    <button type="submit">Upload and Generate Report</button>
+
+<script>
+    document.getElementById('file-upload-form').onsubmit = async (event) => {
+        event.preventDefault();
+        
+        let formData = new FormData();
+        formData.append('sad_file', document.getElementById('sad_file').files[0]);
+        formData.append('budget_file', document.getElementById('budget_file').files[0]);
+        
+        let response = await fetch('{% url "import_stat_report" %}', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (response.ok) {
+            let blob = await response.blob();
+            let url = window.URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = 'Acc_Report.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        } else {
+            let error = await response.json();
+            alert("Upload failed: " + JSON.stringify(error));
+        }
+    };
+</script>    
+</form>
+{% endblock %}
